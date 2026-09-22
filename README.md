@@ -1,6 +1,7 @@
 # The Unofficial Guide
 
 <!-- Replace this line with your name and which corpus you picked. -->
+Alicia Truong - corpus: city_guides
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -21,11 +22,17 @@
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
+This is a retrieval-augmented question-answering system built on the
+`city_guides` corpus — a set of travel guides for a handful of small,
+fictional towns, plus regional pages on transport, walking, eating, and
+seasons. It answers concrete, factual questions about those towns: train and
+bus schedules, how long a walk or museum visit takes, when a town is busiest
+or quietest, what things cost, and practical details like cash vs. card or
+where the nearest hospital is. Given a question, it retrieves the most
+relevant passages from the guides, checks they're actually close enough to be
+useful, and generates an answer that names its source — or says it doesn't
+have enough information if nothing in the corpus is relevant.
 
-     Milestone 5. -->
 
 ## Chunking Strategy
 
@@ -53,29 +60,99 @@
 
      Milestone 3. -->
 
-**Chunk 1** — source: `` — produced by: ``
+**Chunk 1** — source: `guide_accessibility.md#0` — produced by: `chunker.py::fallback_split`
 
 ```
+# Getting around the region with limited mobility
+
+An honest assessment rather than a promotional one. Some of these places are
+difficult and it is better to know in advance.
+
+## Straightforward
+
+**Thornby Wells** is the easiest town in the region. It is flat, compact, and
+everything is within three minutes of everything else. Parking is free for two
+hours anywhere in town and the station is central. The pump room and gardens
+are level throughout.
+
+**Marchwood** has a modern tram network with level boarding on all four lines,
+running every 8 minutes on weekdays. The city museum and covered market are both
+step-free. The distances between districts are the main consideration.
+
+**Brightwater** is level along the river and through the centre. The mill museum
+is step-free. The station is a 15-
 ```
 
-**Chunk 2** — source: `` — produced by: ``
+**Chunk 2** — source: `guide_corry_vale.md#2` — produced by: `chunker.py::fallback_split`
 
 ```
+the second village is 12th century and always unlocked.
+
+## Where to stay
+
+Perhaps thirty beds in the entire valley, spread across two pubs and a handful of farmhouse rooms. In summer these are booked months ahead. Camping is permitted on two marked fields and nowhere else.
+
+## When to go
+
+May to September. Outside those months the pub in the third village closes, the farm shop reduces its hours, and several footpaths become genuinely boggy rather than merely wet. The road is not gritted above the second village and is impassable in snow.
+
+## Practical notes
+
+Cash is still useful at the market and in smaller places, though cards are
+accepted almost everywhere now. Mobile coverage is good in the centre and
+patchy on the outskirts. The nearest full hospital is in Brightwater; there is
+a mino
 ```
 
-**Chunk 3** — source: `` — produced by: ``
+**Chunk 3** — source: `guide_givens_mill.md#0` — produced by: `chunker.py::fallback_split`
 
 ```
+Givens Mill is a village of 700 built around a working watermill that still grinds flour commercially. It is the sort of place people visit for an afternoon and then talk about for longer than the visit lasted.
+
+## Getting there
+
+No station and no bus on Sundays; four buses a day from Brightwater on weekdays, taking 30 minutes. Driving is 20 minutes. The village car park holds about forty cars and is full by 11am on summer Saturdays.
+
+## Getting around
+
+Everything is on one street along the river. The mill is at one end and the church at the other, eight minutes apart. The riverside path continues in both directions for as far as you want to walk.
+
+## Eat and drink
+
+A tearoom attached to the mill, open 10 to 4 daily except Tuesdays, which sells bread made from the flour grou
 ```
 
-**Chunk 4** — source: `` — produced by: ``
+**Chunk 4** — source: `guide_kestrelford.md#3` — produced by: `chunker.py::fallback_split`
 
 ```
+irts. The nearest full hospital is in Brightwater; there is
+a minor injuries unit locally with limited hours.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 5** — source: `guide_regional_transport.md#1` — produced by: `chunker.py::fallback_split`
 
 ```
+oncentrate on weekday daytimes. Sunday service is minimal to non-existent
+outside the Brightwater town routes.
+
+The Kestrelford service is hourly on weekdays, two-hourly on Saturdays, and
+does not run on Sundays. The Halden Bay coast service runs four times daily
+year-round.
+
+## Driving
+
+Roads are good between the towns and poor on the approaches to both Kestrelford
+and Halden Bay. The Kestrelford approach is single-track with passing places
+for the final eight minutes. The Halden Bay coast road is cut into the cliff
+and is slow rather than difficult.
+
+Parking is the constraint rather than driving. Both Halden Bay lots fill by
+10am on summer weekends. Kestrelford's lower car park is free and involves a
+steep walk up.
+
+## Walking and cycling
+
+The river path from Brightwater runs four miles
 ```
 
 ## Sample Answer
