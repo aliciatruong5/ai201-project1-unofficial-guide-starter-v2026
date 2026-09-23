@@ -36,8 +36,8 @@ have enough information if nothing in the corpus is relevant.
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size: 800 characters per 51 chunks**
+**Overlap: 150 at first then changed to 100**
 
 <!-- What about YOUR documents made you pick these numbers? Short posts and
      long sectioned guides don't want the same chunking, and "800 seemed
@@ -160,27 +160,38 @@ The river path from Brightwater runs four miles
 <!-- One complete question and answer, pasted as text, with the source line
      visible. Milestone 4. -->
 
-**Question:**
+**Question: When is the cheapest time to buy a train ticket from Brightwater**
 
 **Answer:**
 
 ```
+(best distance 0.375, cutoff 0.6)
+
+Tickets are cheapest when booked a week ahead, considerably cheaper than booking the day before. (Source: `guide_regional_transport.md`)
+
+Sources retrieved: guide_brightwater.md, guide_kestrelford.md, guide_regional_transport.md, guide_seasons.md
 ```
 
-**My relevance cutoff:**
+**My relevance cutoff: 0.6**
 
-<!-- The number you set in config.py, and how you got there.
-
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+I ran my five in-corpus questions and the five `OUT_OF_SCOPE` questions through
+`app.py retrieve` and recorded the top result's distance for each. The
+in-corpus group topped out at 0.538; the out-of-scope group bottomed out at
+0.811 — a clean gap of about 0.27 with nothing on either side of it, so 0.6
+sits comfortably in the middle rather than right against either group.
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| How many trains run between Brightwater and the regional hub on Sundays? | Yes | 0.307 |
+| How often does the Kestrelford bus service run on Saturdays? | Yes | 0.415 |
+| What used to occupy the building that is now Brightwater's museum, and when did it close? | Yes | 0.538 |
+| When is the cheapest time to buy a train ticket from Brightwater? | Yes | 0.398 |
+| What time do most restaurants in Brightwater stop serving food, and what happens on Sundays? | Yes | 0.359 |
+| What is the capital of Mongolia? | No | 0.887 |
+| How do I change the oil in a diesel engine? | No | 0.877 |
+| Who won the 1994 World Cup? | No | 0.811 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.839 |
+| How do I write a for loop in Rust? | No | 0.853 |
 
 ## How I Used AI
 
@@ -194,6 +205,7 @@ The river path from Brightwater runs four miles
      Milestone 5. -->
 
 **1.**
+
 
 **2.**
 
