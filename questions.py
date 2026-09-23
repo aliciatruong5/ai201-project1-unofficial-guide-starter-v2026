@@ -22,11 +22,20 @@ names a target of "4 of 5", and four of three is not a thing.
 """
 
 QUESTIONS = [
-    {"question": "How many trains run between Brightwater and the regional hub on Sundays?", "expects": "six"},
-    {"question": "How often does the Kestrelford bus service run on Saturdays?", "expects": "two-hourly"},
-    {"question": "What used to occupy the building that is now Brightwater's museum, and when did it close?", "expects": "mill, 1974"},
-    {"question": "When is the cheapest time to buy a train ticket from Brightwater?", "expects": "week ahead"},
-    {"question": "What time do most restaurants in Brightwater stop serving food, and what happens on Sundays?", "expects": "9pm"},
+    {"question": "How many trains run between Brightwater and the regional hub on Sundays?", 
+     "expects": "six"},
+
+    {"question": "How often does the Kestrelford bus service run on Saturdays?", 
+     "expects": "two-hourly"},
+
+    {"question": "What used to occupy the building that is now Brightwater's museum, and when did it close?", 
+     "expects": "mill, 1974"},
+
+    {"question": "When is the cheapest time to buy a train ticket from Brightwater?", 
+     "expects": "week ahead"},
+     
+    {"question": "What time do most restaurants in Brightwater stop serving food, and what happens on Sundays?", 
+     "expects": "9pm"},
 ]
 
 # Questions from a different world entirely. Your gate should refuse all five.
