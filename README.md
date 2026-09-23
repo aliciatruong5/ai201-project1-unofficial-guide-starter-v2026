@@ -339,7 +339,7 @@ I asked Claude to help me with the chunking strategy like getting the sample chu
 
 
 **2.**
-I asked Claude to help me test different chunks and overlay sizes to get the answer look more seemless and not cutoff as much. It then started to test different sizes and I would analyze each result to see what size would fit best for what I was looking for. 
+I asked Claude to help me test different chunks and overlap sizes to get the answer look more seemless and not cutoff as much. It then started to test different sizes and I would analyze each result to see what size would fit best for what I was looking for. 
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never

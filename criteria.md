@@ -69,11 +69,20 @@ in at least 4 of 5 tries.
        - "No chunk is shorter than 200 characters, since anything below that
           in my corpus turned out to be a heading with no content under it." -->
 
-
+Every retrieved chunk is a whole document (my chunk size is bigger than my
+longest document, on purpose — see Chunking Strategy). For at least 4 of my
+5 test questions, the single retrieved chunk that gets cited actually
+contains the section that answers the question, not just the right town in
+general.
 
 **Why this target:**
 
-
+Whole-document chunking fixed my mid-sentence cutoff problem, but it traded
+away topic-level precision: one chunk for `guide_brightwater.md` now holds
+"Getting there," "Eat and drink," "When to go," and everything else mashed
+together. I noticed while testing that the model sometimes cites a document
+about the right town but ends up drawing on the wrong section of it. 4 of 5
+is honest about that risk rather than assuming size alone solved retrieval.
 
 ---
 
@@ -87,11 +96,19 @@ in at least 4 of 5 tries.
      present — anything, as long as it names a number or an observable
      outcome. -->
 
-
+For at least 4 of my 5 test questions, the document named as the source
+actually contains the specific fact used in the answer — not just a
+plausible-looking document that happens to mention the town.
 
 **Why this target:**
 
-
+Because `TOP_K = 5` and my chunks are whole documents, most questions
+retrieve several similar-looking town guides at once (e.g. asking about
+Brightwater pulls in `guide_kestrelford.md` and `guide_seasons.md` too, per
+my Sample Answer above). "Names a source" alone is easy to pass and cheap to
+game — the model just has to cite something. Whether the cited source is
+the one that actually backs the claim is the part I actually care about, and
+the part that's easy to get wrong quietly.
 
 ---
 
