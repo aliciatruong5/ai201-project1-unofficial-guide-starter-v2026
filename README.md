@@ -36,18 +36,29 @@ have enough information if nothing in the corpus is relevant.
 
 ## Chunking Strategy
 
-**Chunk size: 800 characters per 51 chunks**
-**Overlap: 150 at first then changed to 100**
+**Chunk size: 2700 characters (started at 800)**
+**Overlap: 150 characters**
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+I started at the starter's default of 800/120 and changed both numbers after
+actually reading the chunks it produced: about two-thirds of them (33 of 51)
+ended mid-sentence, because 800 characters lands inside a section on
+documents this short. Every guide in `city_guides` is one town written as
+4-8 short, self-contained sections (*Getting there*, *Eat and drink*, *When
+to go*, each a paragraph or two), and the longest document in the whole
+corpus is only 2,510 characters. So rather than hunt for a size that happens
+to respect sentence boundaries, I picked a chunk size bigger than any single
+document, with an overlap large enough that no document produces a leftover
+sliver chunk. That makes "one document" and "one chunk" the same thing — 14
+documents in, 14 chunks out, 0 of 14 ending mid-sentence.
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
-
-     Milestone 3. -->
+The trade-off: a retrieved chunk is now a whole guide rather than just the
+relevant section, so on a couple of questions a different Brightwater-
+adjacent document edges out the "right" one for the #1 spot by a small
+margin. It didn't cost anything in practice — at `TOP_K = 5` the document
+that actually contains the answer was still retrieved for all five of my
+test questions, just not always ranked first. Given how short these
+documents are, finishing every sentence was worth more to me than
+finer-grained ranking.
 
 ## Sample Chunks
 
@@ -80,13 +91,63 @@ running every 8 minutes on weekdays. The city museum and covered market are both
 step-free. The distances between districts are the main consideration.
 
 **Brightwater** is level along the river and through the centre. The mill museum
-is step-free. The station is a 15-
+is step-free. The station is a 15-minute walk from campus on flat ground, or the
+shuttle meets the four busiest arrivals.
+
+## Mixed
+
+**Pellew Sands** has a two-mile seafront that is flat the whole way, and
+everything of interest is on it or one street back. The land train runs the
+length of the promenade hourly between Easter and September. The beach itself is
+hard sand and manageable at low tide.
+
+**Givens Mill** is one flat street along the river. The mill tour involves
+stairs and the machinery floor is not accessible; the tearoom and riverside are.
+
+## Difficult
+
+**Kestrelford** is built on a slope and the walk up from the lower car park is
+steeper than it looks on a map. There is no transport within the town.
+
+**Halden Bay** is built on three levels connected by stepped lanes. The harbour
+front is level; everything above it is not. This is hard going with luggage or a
+pushchair, let alone a wheelchair.
+
+**Corry Vale** has no public transport, villages two to four miles apart, and
+footpaths rather than pavements. **Elder Ness** is shingle and a single street.
+
+## Practical
+
+The nearest full hospital is in Marchwood. Brightwater has a hospital;
+Kestrelford, Halden Bay, Corry Vale, Givens Mill and Elder Ness have minor
+injuries units with limited hours or nothing at all.
+
+Mobile coverage is good in the town centres and patchy on the outskirts, and
+genuinely absent in parts of Corry Vale.
 ```
 
-**Chunk 2** — source: `guide_corry_vale.md#2` — produced by: `chunker.py::fallback_split`
+**Chunk 2** — source: `guide_corry_vale.md#0` — produced by: `chunker.py::fallback_split`
 
 ```
-the second village is 12th century and always unlocked.
+# Corry Vale
+
+Corry Vale is not a town but a valley containing four villages strung along eleven miles of road. Visitors treat it as one destination and locals emphatically do not. The largest village has 900 people and the smallest has 140.
+
+## Getting there
+
+There is no public transport into the valley beyond a school bus that will carry passengers if there is room. Driving from Brightwater takes 35 minutes on a good road as far as the valley mouth and then 20 more on a poor one. Cycling in is a serious undertaking; the road climbs 400 metres in the first four miles.
+
+## Getting around
+
+Nothing within the valley is walkable from anything else — the villages are two to four miles apart. There is one taxi, based in the largest village, and it must be booked a day ahead. Most visitors drive between villages and walk the footpaths in between.
+
+## Eat and drink
+
+One pub in the largest village serves food seven days a week. A second, in the third village, opens Thursday to Sunday. There is a farm shop at the valley mouth that sells bread, cheese and little else, and it closes at 4pm. Bring supplies; this is not a place with options.
+
+## What to see
+
+The valley itself is the attraction. The footpath network is dense and well marked, and a circuit taking in three of the four villages is about nine miles with 500 metres of ascent. The chapel in the second village is 12th century and always unlocked.
 
 ## Where to stay
 
@@ -101,58 +162,124 @@ May to September. Outside those months the pub in the third village closes, the 
 Cash is still useful at the market and in smaller places, though cards are
 accepted almost everywhere now. Mobile coverage is good in the centre and
 patchy on the outskirts. The nearest full hospital is in Brightwater; there is
-a mino
-```
-
-**Chunk 3** — source: `guide_givens_mill.md#0` — produced by: `chunker.py::fallback_split`
-
-```
-Givens Mill is a village of 700 built around a working watermill that still grinds flour commercially. It is the sort of place people visit for an afternoon and then talk about for longer than the visit lasted.
-
-## Getting there
-
-No station and no bus on Sundays; four buses a day from Brightwater on weekdays, taking 30 minutes. Driving is 20 minutes. The village car park holds about forty cars and is full by 11am on summer Saturdays.
-
-## Getting around
-
-Everything is on one street along the river. The mill is at one end and the church at the other, eight minutes apart. The riverside path continues in both directions for as far as you want to walk.
-
-## Eat and drink
-
-A tearoom attached to the mill, open 10 to 4 daily except Tuesdays, which sells bread made from the flour grou
-```
-
-**Chunk 4** — source: `guide_kestrelford.md#3` — produced by: `chunker.py::fallback_split`
-
-```
-irts. The nearest full hospital is in Brightwater; there is
 a minor injuries unit locally with limited hours.
 ```
 
-**Chunk 5** — source: `guide_regional_transport.md#1` — produced by: `chunker.py::fallback_split`
+**Chunk 3** — source: `guide_elder_ness.md#0` — produced by: `chunker.py::fallback_split`
 
 ```
-oncentrate on weekday daytimes. Sunday service is minimal to non-existent
-outside the Brightwater town routes.
+# Elder Ness
 
-The Kestrelford service is hourly on weekdays, two-hourly on Saturdays, and
-does not run on Sundays. The Halden Bay coast service runs four times daily
-year-round.
+Elder Ness is a headland with a village of 300 on it, a lighthouse, a bird observatory, and very little else. People come for one of three reasons — birds, walking, or a deliberate absence of things to do.
 
-## Driving
+## Getting there
 
-Roads are good between the towns and poor on the approaches to both Kestrelford
-and Halden Bay. The Kestrelford approach is single-track with passing places
-for the final eight minutes. The Halden Bay coast road is cut into the cliff
-and is slow rather than difficult.
+A single road in, which floods at the highest spring tides roughly six times a year for about two hours either side of high water. Tide tables are posted at the turning and are worth reading. No public transport of any kind. Nearest station is Pellew Sands, 40 minutes by road.
 
-Parking is the constraint rather than driving. Both Halden Bay lots fill by
-10am on summer weekends. Kestrelford's lower car park is free and involves a
-steep walk up.
+## Getting around
 
-## Walking and cycling
+On foot. The village is one street. The lighthouse is a 25-minute walk along the shingle, which is harder going than the distance suggests. There is one car park at the village and parking anywhere else on the headland is prohibited and enforced.
 
-The river path from Brightwater runs four miles
+## Eat and drink
+
+One pub, serving food 12 to 2 and 6 to 8, closed Mondays. A shop that sells basics and closes at 5pm and all day Sunday. That is the complete list. Visitors staying more than a night bring food with them.
+
+## What to see
+
+The bird observatory takes day visitors and the wardens are generous with their time; spring and autumn migration are the reasons to come. The lighthouse is not open to the public but the walk to it is the point. The shingle beach is dramatic and swimming is genuinely dangerous — there is a strong offshore current and no lifeguard.
+
+## Where to stay
+
+The pub has four rooms and the observatory has dormitory accommodation for members and their guests. Both book up entirely for the migration seasons a year ahead. There is nothing else.
+
+## When to go
+
+April to May and September to October for birds, which is what most visitors come for. Midsummer is pleasant and quiet. Winter is severe, the road floods more often, and the pub reduces to weekends only.
+
+## Practical notes
+
+Cash is still useful at the market and in smaller places, though cards are
+accepted almost everywhere now. Mobile coverage is good in the centre and
+patchy on the outskirts. The nearest full hospital is in Brightwater; there is
+a minor injuries unit locally with limited hours.
+```
+
+**Chunk 4** — source: `guide_halden_bay.md#0` — produced by: `chunker.py::fallback_split`
+
+```
+# Halden Bay
+
+Halden Bay is a working fishing port of 8,000 that has picked up a second life as a weekend destination. The two economies sit somewhat awkwardly beside each other and the town is candid about it.
+
+## Getting there
+
+The coast road is the only approach and it is slow — 40 minutes for 22 miles, with the last stretch cut into the cliff. Buses run four times a day. Parking in the town itself is limited to two small lots that fill by 10am on summer weekends; the overflow lot is a 12-minute walk up a hill.
+
+## Getting around
+
+The town is small enough to cross in fifteen minutes but is built on three levels connected by stepped lanes, which makes it hard going with luggage or a pushchair. The harbour front is level; everything above it is not.
+
+## Eat and drink
+
+Seafood, unsurprisingly, and it is genuinely fresh — the boats land in the early morning and the two harbour restaurants buy directly. Prices on the harbour front are roughly double those on Fell Street, one level up, for comparable food. Everything closes by 9pm and much of it closes entirely from November to February.
+
+## What to see
+
+The harbour at 6am when the boats come in is the thing worth setting an alarm for. The coastal path runs in both directions, north to a lighthouse in about two hours and south along the cliffs for as far as you want. The small museum on Fell Street covers the fishing industry and takes 40 minutes.
+
+## Where to stay
+
+Almost entirely holiday lets rather than hotels, which means minimum stays of two or three nights in summer. There is one inn on the harbour. Prices roughly halve outside July and August.
+
+## When to go
+
+June and September are the sweet spot. July and August are busy enough that the parking problem becomes the defining feature of the visit. Winter is dramatic and largely closed. The coastal path is genuinely dangerous in high wind and gets shut.
+
+## Practical notes
+
+Cash is still useful at the market and in smaller places, though cards are
+accepted almost everywhere now. Mobile coverage is good in the centre and
+patchy on the outskirts. The nearest full hospital is in Brightwater; there is
+a minor injuries unit locally with limited hours.
+```
+
+**Chunk 5** — source: `guide_marchwood.md#0` — produced by: `chunker.py::fallback_split`
+
+```
+# Marchwood
+
+Marchwood is the regional hub — 180,000 people, the junction everyone changes trains at, and a city most visitors pass through rather than stop in. That is a mistake, though an understandable one, since almost nothing of interest is near the station.
+
+## Getting there
+
+Every railway line in the region meets here, which is the city's defining feature. Trains to Brightwater run every 40 minutes until 11pm. The airport is 20 minutes out by a dedicated bus that runs every 15 minutes and costs more than the equivalent taxi shared between three people.
+
+## Getting around
+
+A tram network of four lines, running every 8 minutes on weekdays and every 15 at weekends, until midnight. A day ticket costs less than two single fares and nobody tells you this at the machine. The centre is walkable but the interesting districts are not adjacent to each other.
+
+## Eat and drink
+
+The best eating is in the Northgate district, a 12-minute tram ride from the station, where about thirty restaurants sit within four streets. The area immediately around the station is uniformly poor and expensive. Marchwood keeps later hours than anywhere else in the region — kitchens serve until 10:30pm, and until midnight on Fridays and Saturdays.
+
+## What to see
+
+The city museum is free and genuinely excellent, particularly the industrial floor. The covered market has operated since 1863 and is at its best on a weekday morning. The canal walk from Northgate to the old lock is 40 minutes and is the thing residents recommend when asked.
+
+## Where to stay
+
+Plentiful and, outside conference weeks, cheap. Northgate is the district worth staying in. Station-area hotels are convenient for an early train and dispiriting for anything else.
+
+## When to go
+
+Any time. This is the one place in the region that works in winter, since almost everything is indoors and nothing closes seasonally. Conference weeks in March and October fill the hotels and double the prices; check before booking.
+
+## Practical notes
+
+Cash is still useful at the market and in smaller places, though cards are
+accepted almost everywhere now. Mobile coverage is good in the centre and
+patchy on the outskirts. The nearest full hospital is in Brightwater; there is
+a minor injuries unit locally with limited hours.
 ```
 
 ## Sample Answer
@@ -160,38 +287,41 @@ The river path from Brightwater runs four miles
 <!-- One complete question and answer, pasted as text, with the source line
      visible. Milestone 4. -->
 
-**Question: When is the cheapest time to buy a train ticket from Brightwater**
+**Question: When is the cheapest time to buy a train ticket from Brightwater?**
 
 **Answer:**
 
 ```
-(best distance 0.375, cutoff 0.6)
+(best distance 0.438, cutoff 0.6)
 
-Tickets are cheapest when booked a week ahead, considerably cheaper than booking the day before. (Source: `guide_regional_transport.md`)
+Based on the documents, train tickets are considerably cheaper when booked a week ahead (and are also cheaper booked the day before than on the day). (Source: `guide_regional_transport.md`)
 
-Sources retrieved: guide_brightwater.md, guide_kestrelford.md, guide_regional_transport.md, guide_seasons.md
+Sources retrieved: guide_brightwater.md, guide_kestrelford.md, guide_regional_transport.md, guide_seasons.md, guide_walking.md
 ```
 
 **My relevance cutoff: 0.6**
 
 I ran my five in-corpus questions and the five `OUT_OF_SCOPE` questions through
-`app.py retrieve` and recorded the top result's distance for each. The
-in-corpus group topped out at 0.538; the out-of-scope group bottomed out at
-0.811 — a clean gap of about 0.27 with nothing on either side of it, so 0.6
-sits comfortably in the middle rather than right against either group.
+`app.py retrieve` and recorded the top result's distance for each, using the
+2700/150 chunking above. The in-corpus group topped out at 0.564; the
+out-of-scope group bottomed out at 0.841 — a clean gap of about 0.28 with
+nothing on either side of it, so 0.6 sits comfortably in the middle rather
+than right against either group. (These numbers moved slightly from an
+earlier pass at 800/120 chunking, but the size and location of the gap barely
+changed, so I kept the cutoff at 0.6.)
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-| How many trains run between Brightwater and the regional hub on Sundays? | Yes | 0.307 |
-| How often does the Kestrelford bus service run on Saturdays? | Yes | 0.415 |
-| What used to occupy the building that is now Brightwater's museum, and when did it close? | Yes | 0.538 |
-| When is the cheapest time to buy a train ticket from Brightwater? | Yes | 0.398 |
-| What time do most restaurants in Brightwater stop serving food, and what happens on Sundays? | Yes | 0.359 |
-| What is the capital of Mongolia? | No | 0.887 |
-| How do I change the oil in a diesel engine? | No | 0.877 |
-| Who won the 1994 World Cup? | No | 0.811 |
-| What is the recommended dosage of ibuprofen for a headache? | No | 0.839 |
-| How do I write a for loop in Rust? | No | 0.853 |
+| How many trains run between Brightwater and the regional hub on Sundays? | Yes | 0.381 |
+| How often does the Kestrelford bus service run on Saturdays? | Yes | 0.408 |
+| What used to occupy the building that is now Brightwater's museum, and when did it close? | Yes | 0.564 |
+| When is the cheapest time to buy a train ticket from Brightwater? | Yes | 0.438 |
+| What time do most restaurants in Brightwater stop serving food, and what happens on Sundays? | Yes | 0.429 |
+| What is the capital of Mongolia? | No | 0.896 |
+| How do I change the oil in a diesel engine? | No | 0.908 |
+| Who won the 1994 World Cup? | No | 1.060 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.841 |
+| How do I write a for loop in Rust? | No | 0.875 |
 
 ## How I Used AI
 
@@ -204,10 +334,12 @@ sits comfortably in the middle rather than right against either group.
 
      Milestone 5. -->
 
-**1.**
+**1.** 
+I asked Claude to help me with the chunking strategy like getting the sample chunks. It then started to rewrite the whole chunker.py file. So I just ended up using the command that was given. 
 
 
 **2.**
+I asked Claude to help me test different chunks and overlay sizes to get the answer look more seemless and not cutoff as much. It then started to test different sizes and I would analyze each result to see what size would fit best for what I was looking for. 
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
