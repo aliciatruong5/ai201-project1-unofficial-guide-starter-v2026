@@ -368,15 +368,39 @@ I asked Claude to help me test different chunks and overlap sizes to get the ans
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 4. Cited chunk actually contains the section that answers the question | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 5. Named source actually backs the specific fact used | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 
-<!-- Underneath, paste the REAL output for each criterion from one of your
-     runs — the actual text your system produced, not a description of it.
-     Name the file and function that produced it. -->
+Produced by `run_eval.py::main` (criteria 1, 2, 4, 5) and
+`run_eval.py::check_out_of_scope` (criterion 3), scored by
+`scorer.py::judge`. Full transcript in
+`results/run_2026-09-23_1644_before.md`. Criterion 3 is a single
+deterministic pass, so the same number appears in all three run columns.
+
+Real output — one question, run 1, `run_eval.py::run_once` calling
+`generate.py::answer_from_chunks`:
+
+```
+### What used to occupy the building that is now Brightwater's museum, and when did it close? — run 1
+
+- Best distance: 0.5638 (passed the gate)
+- Sources retrieved: guide_accessibility.md, guide_brightwater.md, guide_regional_transport.md, guide_seasons.md, guide_walking.md
+
+A mill occupied the building that is now Brightwater's museum, and it closed in 1974.
+
+Source: `guide_brightwater.md`
+```
+
+This one row is evidence for four of the five criteria at once: the answer
+is right (1), it names a source (2), and that source — `guide_brightwater.md`
+— is the document that actually contains both the mill/1974 fact and the
+museum description, not just a plausible-looking guess (4 and 5). Criterion
+3's evidence is the out-of-scope table above: the gate refused all 5 of 5
+`OUT_OF_SCOPE` questions with distances (0.841–1.060) well clear of the
+0.564 highest in-corpus distance.
 
 ## Verdicts
 
@@ -388,14 +412,6 @@ I asked Claude to help me test different chunks and overlap sizes to get the ans
      The target has to hold, not show up occasionally.
 
      Milestone 2. -->
-
-| # | Criterion | Verdict | How I decided |
-|---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
 
 ## Diagnoses
 

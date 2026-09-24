@@ -25,8 +25,8 @@ QUESTIONS = [
     {"question": "How many trains run between Brightwater and the regional hub on Sundays?", 
      "expects": "six"},
 
-    {"question": "How often does the Kestrelford bus service run on Saturdays?", 
-     "expects": "two-hourly"},
+    {"question": "How often does the Kestrelford bus service run on Saturdays?",
+     "expects": "two hours"},
 
     {"question": "What used to occupy the building that is now Brightwater's museum, and when did it close?", 
      "expects": "mill, 1974"},
