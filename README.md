@@ -412,8 +412,7 @@ museum description, not just a plausible-looking guess (4 and 5). Criterion
 | 2 | Every answer names a source | MET | Target was 5 of 5, all three runs came back 5 of 5. Every one of the 15 answers across the three runs included an explicit `Source:`-style line. |
 | 3 | Gate stops out-of-corpus questions | MET | Target was 4 of 5; the gate refused 5 of 5. The lowest out-of-scope distance (0.841) was well clear of the highest in-corpus distance (0.564), so this wasn't a borderline call. |
 | 4 | Cited chunk actually contains the section that answers the question | MET | Target was 4 of 5; came back 5 of 5 on all three runs. I checked this by hand for each question — e.g. the museum question cites `guide_brightwater.md`, and that document's own text contains both the mill/1974 fact and the museum description, not just the right town in general. |
-| 5 | Named source actually backs the specific fact used | MET | Target was 4 of 5; came back 5 of 5 on all three runs. Same manual check as criterion 4: for every question, the document named in the answer was the one that literally contained the cited fact, even though `TOP_K=5` retrieves several similar-looking town 
-guides at once. |
+| 5 | Named source actually backs the specific fact used | MET | Target was 4 of 5; came back 5 of 5 on all three runs. Same manual check as criterion 4: for every question, the document named in the answer was the one that literally contained the cited fact, even though `TOP_K=5` retrieves several similar-looking town guides at once. |
 
 ## Diagnoses
 
@@ -494,11 +493,13 @@ in its own chunk, with nothing else diluting its embedding.
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 4. Cited chunk actually contains the section that answers the question | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 5. Named source actually backs the specific fact used | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+
+Full transcript in `results/run_2026-09-25_1603_after.md`.
 
 **Did it help?**
 
@@ -508,6 +509,18 @@ in its own chunk, with nothing else diluting its embedding.
      tell.
 
      Milestone 4. -->
+
+Yes, on the specific thing I changed it for. All five original criteria
+still hold at a clean 5 of 5 — switching chunkers didn't break anything —
+but the real evidence is the question that motivated the change in the
+first place: *"Which town's mill closed down and became a museum, as
+opposed to a town where the mill is still working?"* Before the change,
+this failed — `guide_brightwater.md` never made it into the top 5 retrieved
+chunks, and the system answered that no such town existed. After switching
+to section-level chunking, the same question now correctly retrieves
+`guide_brightwater.md` and answers "The mill in Brightwater closed down and
+is now a museum... whereas Givens Mill is built around a working watermill
+that still grinds flour commercially," citing both documents by name.
 
 ## What's Still Broken
 
@@ -519,9 +532,21 @@ in its own chunk, with nothing else diluting its embedding.
 
      Milestone 5. -->
 
+Criteria 4 and 5 are only proven against one hard case, not five. The mill/museum question that exposed the original chunking bug, and then confirmed the fix, isn't one of my five official test questions — I found it by hand while writing the Diagnoses section. All five official questions still ask about single, distinctive facts, so 5 of 5 on criteria 4 and 5 is real but narrower evidence than the table makes it look. I ran out of time to add a genuinely ambiguous cross-town question to the official set and re-run the full before/after comparison with it included.
+
+
 ## What I'd Do Differently
 
 <!-- Knowing what you know now — which of your five criteria would you write
      differently, and why?
 
      Milestone 5. -->
+
+I rewrite criteria 4 and 5 with a mixed set of questions from the
+start: some asking about a distinctive fact (safe, low ambiguity) and at
+least one deliberately built to make two documents look equally relevant,
+the way the mill/museum question did by accident. Writing the criteria
+before Milestone 3 meant I had no way to know that whole-document chunking
+would create that specific risk — but I could still have hedged by
+including a harder, more adversarial question up front rather than writing
+one for the Diagnoses section after the fact.
