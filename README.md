@@ -374,14 +374,7 @@ I asked Claude to help me test different chunks and overlap sizes to get the ans
 | 4. Cited chunk actually contains the section that answers the question | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 | 5. Named source actually backs the specific fact used | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 
-Produced by `run_eval.py::main` (criteria 1, 2, 4, 5) and
-`run_eval.py::check_out_of_scope` (criterion 3), scored by
-`scorer.py::judge`. Full transcript in
-`results/run_2026-09-23_1644_before.md`. Criterion 3 is a single
-deterministic pass, so the same number appears in all three run columns.
-
-Real output — one question, run 1, `run_eval.py::run_once` calling
-`generate.py::answer_from_chunks`:
+Full transcript in `results/run_2026-09-23_1644_before.md`. Criterion 3 is a single deterministic pass, so the same number appears in all three run columns.
 
 ```
 ### What used to occupy the building that is now Brightwater's museum, and when did it close? — run 1
@@ -413,6 +406,15 @@ museum description, not just a plausible-looking guess (4 and 5). Criterion
 
      Milestone 2. -->
 
+| # | Criterion | Verdict | How I decided |
+|---|---|---|---|
+| 1 | Retrieved chunk contains the answer | MET | Target was 4 of 5; all three runs came back 5 of 5. Not close — every question's answer was traceable to a retrieved chunk in all three runs, not just most of the time. |
+| 2 | Every answer names a source | MET | Target was 5 of 5, all three runs came back 5 of 5. Every one of the 15 answers across the three runs included an explicit `Source:`-style line. |
+| 3 | Gate stops out-of-corpus questions | MET | Target was 4 of 5; the gate refused 5 of 5. The lowest out-of-scope distance (0.841) was well clear of the highest in-corpus distance (0.564), so this wasn't a borderline call. |
+| 4 | Cited chunk actually contains the section that answers the question | MET | Target was 4 of 5; came back 5 of 5 on all three runs. I checked this by hand for each question — e.g. the museum question cites `guide_brightwater.md`, and that document's own text contains both the mill/1974 fact and the museum description, not just the right town in general. |
+| 5 | Named source actually backs the specific fact used | MET | Target was 4 of 5; came back 5 of 5 on all three runs. Same manual check as criterion 4: for every question, the document named in the answer was the one that literally contained the cited fact, even though `TOP_K=5` retrieves several similar-looking town 
+guides at once. |
+
 ## Diagnoses
 
 <!-- For each miss: which stage caused it, and how. The stage alone isn't
@@ -433,14 +435,57 @@ museum description, not just a plausible-looking guess (4 and 5). Criterion
 
      Milestone 3. -->
 
+I missed nothing — all five criteria came back 5 of 5 on all three runs. But
+two of them (4 and 5) were set specifically to catch a risk I introduced
+myself in Milestone 3: my chunk size is bigger than any document, so a
+retrieved chunk is a whole guide, not just the section that answers the
+question. That should make it *easier* for the model to cite a plausible-
+looking but wrong document when two towns share a similar fact. My five test
+questions never actually test that: each one asks about a fact that's
+distinctive enough (a specific number, a specific closure date) that only
+one document was ever a real candidate, so criteria 4 and 5 never had a
+chance to be missed — they were never really at stake.
+
+That means "4 of 5" for criteria 4 and 5 was set too low, in the sense that
+it's not really measuring what I meant it to measure. I'd tighten it by
+adding a sixth-and-seventh kind of test question I don't currently have: one
+where two different towns both mention a similar-sounding fact (e.g. two
+guides both close "at 9pm," or two both used to be built around a mill), so
+retrieval has an actual chance to hand back the wrong document and citation
+5 of 5 becomes a real target instead of a foregone one.
+
 ## The Improvement
 
 **What I changed:**
+
+Switched `chunker.py::split_documents` from whole-document chunks (2700/150)
+to one chunk per `##` section, instead of reverting to the original
+800/120 fixed-size window. Every section in `city_guides` is already a
+short, complete, self-contained paragraph (*Getting there*, *Eat and
+drink*, *When to go*), so splitting on the heading keeps the "no
+mid-sentence cuts" property of my current chunking while giving each
+chunk back a single, focused topic instead of an entire town's worth of
+unrelated sections mixed together.
+
 
 **Why I picked it:**
 
 <!-- Connect it to a specific diagnosis above in one sentence. If you can't,
      you picked a fix because it sounded impressive. -->
+
+This is a direct response to a failure I found while testing the Diagnoses
+section's own prediction. I asked a harder question designed to stress the
+exact risk criteria 4 and 5 were meant to catch: *"Which town's mill closed
+down and became a museum, as opposed to a town where the mill is still
+working?"* The system answered that there was no such town — wrong.
+`guide_brightwater.md`, which literally says its mill "closed in 1974" and
+"is now a museum," never made it into the top-5 retrieved chunks at all.
+The single sentence that answers the question was diluted inside a
+~2,000-character embedding covering six unrelated topics, and `guide_givens_mill.md` —
+about a still-*working* mill, topically closer to the question's wording —
+out-ranked it instead. Section-level chunking directly targets that
+mechanism: it would put "Brightwater's mill closed in 1974, now a museum"
+in its own chunk, with nothing else diluting its embedding.
 
 ### Run Log — After
 

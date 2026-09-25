@@ -22,10 +22,14 @@ to it, write down what you saw, and move on. That's a real observation about
 your pipeline, not giving up.
 """
 
+import re
 from dataclasses import dataclass
 
 import config
 from ingest import Document
+
+HEADING_RE = re.compile(r"(?m)^## (.+)$")
+TITLE_RE = re.compile(r"(?m)^# (.+)$")
 
 
 @dataclass
@@ -82,22 +86,68 @@ def fallback_split(
 
 def split_documents(documents: list[Document]) -> list[Chunk]:
     """
-    Split documents into chunks. ⚠️ REPLACE THE BODY OF THIS IN MILESTONE 3.
+    Split documents into chunks, one chunk per `##` section.
 
-    Right now it just calls the fallback. That is the plain, generic behaviour
-    the brief is talking about.
+    Every city_guides document is a short (~2,000 character) guide made of
+    4-8 self-contained sections — "Getting there," "Eat and drink," "When to
+    go" — each covering exactly one topic in a paragraph or two. Whole-
+    document chunking (an earlier version of this function, at 2700/150)
+    avoided mid-sentence cuts but diluted each chunk's embedding across every
+    topic in the guide, and I found a real case where that cost precision:
+    a question about which town's mill closed and became a museum failed to
+    retrieve guide_brightwater.md at all, because the one relevant sentence
+    was buried in a chunk about six other subjects, and a document actually
+    about a still-working mill (guide_givens_mill.md) out-ranked it instead.
 
-    When you write your own strategy, set `produced_by` to
-    "chunker.py::split_documents" so your README's Sample Chunks section names
-    the right function. `app.py chunks` prints that string for you.
+    Splitting on `##` headings fixes that without reintroducing cut-off
+    chunks: a heading is a boundary the document's own author put there, so
+    it never lands mid-sentence, and each resulting chunk covers one topic
+    instead of seven.
 
-    Things worth thinking about before you write any code:
-      - Are your documents short posts or long guides?
-      - Is the useful information in one sentence, or spread over a paragraph?
-      - Would splitting on paragraph breaks keep more thoughts intact than
-        splitting on a character count?
+    Each chunk is prefixed with the document's title (the `# ` line), since a
+    section on its own — e.g. "Getting around" — doesn't say which town it's
+    about. That repetition is what stands in for overlap here: instead of
+    sharing raw characters with a neighbouring chunk, every chunk carries the
+    one piece of context (which guide it came from) it would otherwise lose
+    by being pulled out of the document.
     """
-    return fallback_split(documents)
+    chunks: list[Chunk] = []
+    for doc in documents:
+        title_match = TITLE_RE.match(doc.text)
+        title = title_match.group(1).strip() if title_match else doc.source
+
+        parts = HEADING_RE.split(doc.text)
+        intro = parts[0]
+        if title_match:
+            intro = intro[title_match.end():]
+        intro = intro.strip()
+
+        index = 0
+        if len(intro) > 40:
+            chunks.append(
+                Chunk(
+                    text=f"{title}\n\n{intro}",
+                    source=doc.source,
+                    index=index,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+            index += 1
+
+        for i in range(1, len(parts), 2):
+            heading = parts[i].strip()
+            body = parts[i + 1].strip()
+            chunks.append(
+                Chunk(
+                    text=f"{title} — {heading}\n\n{body}",
+                    source=doc.source,
+                    index=index,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+            index += 1
+
+    return chunks
 
 
 def describe(chunks: list[Chunk]) -> str:
