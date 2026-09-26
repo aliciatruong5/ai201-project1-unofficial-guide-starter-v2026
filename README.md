@@ -374,7 +374,14 @@ I asked Claude to help me test different chunks and overlap sizes to get the ans
 | 4. Cited chunk actually contains the section that answers the question | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 | 5. Named source actually backs the specific fact used | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 
-Full transcript in `results/run_2026-09-23_1644_before.md`. Criterion 3 is a single deterministic pass, so the same number appears in all three run columns.
+Produced by `run_eval.py::main` (criteria 1, 2, 4, 5) and
+`run_eval.py::check_out_of_scope` (criterion 3), scored by
+`scorer.py::judge`. Full transcript in
+`results/run_2026-09-23_1644_before.md`. Criterion 3 is a single
+deterministic pass, so the same number appears in all three run columns.
+
+Real output — one question, run 1, `run_eval.py::run_once` calling
+`generate.py::answer_from_chunks`:
 
 ```
 ### What used to occupy the building that is now Brightwater's museum, and when did it close? — run 1
@@ -499,7 +506,12 @@ in its own chunk, with nothing else diluting its embedding.
 | 4. Cited chunk actually contains the section that answers the question | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 | 5. Named source actually backs the specific fact used | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 
-Full transcript in `results/run_2026-09-25_1603_after.md`.
+Produced by `run_eval.py::main` (criteria 1, 2, 4, 5) and
+`run_eval.py::check_out_of_scope` (criterion 3), scored by
+`scorer.py::judge`, chunks from `chunker.py::split_documents`. Full
+transcript in `results/run_2026-09-25_1603_after.md`. Criterion 3 is a
+single deterministic pass, so the same number appears in all three run
+columns.
 
 **Did it help?**
 
